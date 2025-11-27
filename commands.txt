@@ -1,0 +1,17 @@
+Python commands to run: 
+py -3.11 -m pip install -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
+py -3.11 -m uvicorn app.main:app --reload
+
+Docker commands to run: 
+docker build -t prince024/library-managment-system .
+docker login
+docker push prince024/library-managment-system
+After changes we can directly run by this command: docker-compose up --build
+
+Github commands to run: 
+git init
+git status
+git add .
+git remote add origin https://github.com/prince-raiyani-AI/library-managment-system.git
+git commit -m "Adding all files"
+git push -u origin main

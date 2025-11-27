@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>My Library History</h2>
+
+    <div class="transactions-list">
+        {% if transactions %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Book</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr>
+                    <td>{{ t.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ t.book.title }}</td>
+                    <td>
+                        <span class="badge {{ 'type-buy' if t.transaction_type == 'buy' else 'type-borrow' }}">
+                            {{ t.transaction_type|upper }}
+                        </span>
+                    </td>
+                    <td>₹{{ t.amount }}</td>
+                    <td>
+                        {% if t.transaction_type == 'borrow' %}
+                        {% if t.is_returned %}
+                        <span class="status-returned" style="color: white;">Returned</span>
+                        {% else %}
+                        <span class="status-active">Due: {{ t.due_date.strftime('%Y-%m-%d') }}</span>
+                        <form action="/books/return/{{ t.id }}" method="post"
+                            style="display: inline-block; margin-left: 10px;">
+                            <button type="submit" class="btn-buy"
+                                style="padding: 4px 8px; font-size: 0.8rem; background-color: var(--primary-color); color: white;">Return</button>
+                        </form>
+                        {% endif %}
+                        {% else %}
+                        <span class="status-completed">Completed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>You haven't purchased or borrowed any books yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

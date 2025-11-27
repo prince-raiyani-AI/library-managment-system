@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DarkPan - Library Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="/" class="logo">
+            <i class="fa fa-book-open"></i> DarkPan
+        </a>
+
+        <div style="margin-top: 20px;">
+            <a href="/" class="nav-item {{ 'active' if request.url.path == '/' else '' }}">
+                <i class="fa fa-tachometer-alt"></i> Dashboard
+            </a>
+
+            {% if user %}
+            {% if user.is_staff %}
+            <a href="/dashboard"
+                class="nav-item {{ 'active' if '/dashboard' in request.url.path and '/users' not in request.url.path else '' }}">
+                <i class="fa fa-chart-line"></i> Analytics
+            </a>
+            <a href="/dashboard/users"
+                class="nav-item {{ 'active' if '/dashboard/users' in request.url.path else '' }}">
+                <i class="fa fa-users"></i> Users
+            </a>
+            {% else %}
+            <a href="/books/my-books" class="nav-item {{ 'active' if '/books/my-books' in request.url.path else '' }}">
+                <i class="fa fa-history"></i> My History
+            </a>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div class="search-bar">
+                {% if request.url.path == '/' %}
+                <form action="/" method="get" style="display: flex; gap: 10px; margin: 0;">
+                    <input type="text" name="q" placeholder="Search..."
+                        style="width: 300px; margin: 0; background: var(--dark); border: none;">
+                </form>
+                {% endif %}
+            </div>
+
+            <div class="user-profile">
+                {% if user %}
+                <span style="color: var(--light);">{{ user.email }}</span>
+                <div class="user-avatar">
+                    {{ user.email[0]|upper }}
+                </div>
+                <a href="/auth/logout" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem;">Logout</a>
+                {% else %}
+                <a href="/auth/login" class="btn btn-primary">Login</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="container-fluid">
+            {% block content %}{% endblock %}
+        </div>
+
+        <!-- Footer -->
+        <div class="container-fluid" style="margin-top: auto; border-top: 1px solid var(--border); padding: 20px;">
+            <div style="display: flex; justify-content: space-between; color: var(--light);">
+                <div>
+                    &copy; <a href="#" style="color: var(--primary); text-decoration: none;">Library System</a>, All
+                    Right Reserved.
+                </div>
+                <div>
+                    Designed by <a href="https://htmlcodex.com"
+                        style="color: var(--primary); text-decoration: none;">HTML Codex</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

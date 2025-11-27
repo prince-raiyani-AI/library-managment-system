@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="color: var(--primary);">Staff Dashboard</h3>
+        <button onclick="document.getElementById('addBookModal').style.display='block'" class="btn btn-primary">
+            <i class="fa fa-plus"></i> Add New Book
+        </button>
+    </div>
+
+    <!-- Analytics Cards -->
+    <div class="dashboard-grid">
+        <div class="card stat-card">
+            <div class="stat-icon">
+                <i class="fa fa-inr"></i>
+            </div>
+            <div class="stat-info">
+                <h4>Total Revenue</h4>
+                <h2>₹{{ "%.2f"|format(total_sales_amount) }}</h2>
+            </div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-icon">
+                <i class="fa fa-book"></i>
+            </div>
+            <div class="stat-info">
+                <h4>Books Sold</h4>
+                <h2>{{ total_books_sold }}</h2>
+            </div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-icon">
+                <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-info">
+                <h4>Overdue Books</h4>
+                <h2 style="color: var(--primary);">{{ overdue_transactions|length }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+        <!-- High Demand Books -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">High Demand Books</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if high_demand_books %}
+                        {% for book, count in high_demand_books %}
+                        <tr>
+                            <td>{{ book.title }}</td>
+                            <td>{{ count }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="2" style="text-align: center; color: var(--light);">No data available</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Low Stock Alert -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Low Stock Alert
+                </h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if low_stock_books %}
+                        {% for book in low_stock_books %}
+                        <tr>
+                            <td>{{ book.title }}</td>
+                            <td style="color: var(--primary); font-weight: bold;">{{ book.quantity }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="2" style="text-align: center; color: var(--light);">Stock levels are good</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Borrowing Management -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title" style="color: white;">Return Management</h3>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Book</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if overdue_transactions or upcoming_due_transactions %}
+                    {% for t in overdue_transactions %}
+                    <tr>
+                        <td>{{ t.user.email }}</td>
+                        <td>{{ t.book.title }}</td>
+                        <td style="color: var(--primary);">{{ t.due_date.strftime('%Y-%m-%d') }}</td>
+                        <td><span class="badge badge-danger">OVERDUE</span></td>
+                        <td>
+                            <form action="/dashboard/return/{{ t.id }}" method="post">
+                                <button type="submit" class="btn btn-primary"
+                                    style="padding: 5px 10px; font-size: 0.8rem; color: white;">Return</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% for t in upcoming_due_transactions %}
+                    <tr>
+                        <td>{{ t.user.email }}</td>
+                        <td>{{ t.book.title }}</td>
+                        <td style="color: #fa0000;">{{ t.due_date.strftime('%Y-%m-%d') }}</td>
+                        <td><span class="badge badge-warning">DUE SOON</span></td>
+                        <td>
+                            <form action="/dashboard/return/{{ t.id }}" method="post">
+                                <button type="submit" class="btn btn-primary"
+                                    style="padding: 5px 10px; font-size: 0.8rem; color: white;">Return</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--light);">No pending returns</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Book Modal -->
+<div id="addBookModal" class="modal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+    <div class="card" style="width: 500px; max-width: 90%; margin: 50px auto; position: relative;">
+        <div class="card-header">
+            <h3 class="card-title">Add New Book</h3>
+            <span onclick="document.getElementById('addBookModal').style.display='none'"
+                style="cursor: pointer; color: var(--light); font-size: 1.5rem;">&times;</span>
+        </div>
+        <form action="/books/add" method="post" enctype="multipart/form-data">
+            <div style="margin-bottom: 15px;">
+                <label style="color: var(--light); margin-bottom: 5px; display: block;">Title</label>
+                <input type="text" name="title" required>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="color: var(--light); margin-bottom: 5px; display: block;">Author</label>
+                <input type="text" name="author" required>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="color: var(--light); margin-bottom: 5px; display: block;">Price (₹)</label>
+                    <input type="number" step="0.01" name="price" required>
+                </div>
+                <div>
+                    <label style="color: var(--light); margin-bottom: 5px; display: block;">Quantity</label>
+                    <input type="number" name="quantity" required>
+                </div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="color: var(--light); margin-bottom: 5px; display: block;">Description</label>
+                <textarea name="description" rows="3" required></textarea>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="color: var(--light); margin-bottom: 5px; display: block;">Cover Image</label>
+                <input type="file" name="image" accept="image/*" required style="padding: 5px;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Add Book</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

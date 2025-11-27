@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Book Catalog</h3>
+        {% if user and user.is_staff %}
+        <button class="btn btn-primary" onclick="alert('Use Dashboard to Add Books')">Add New Book</button>
+        {% endif %}
+    </div>
+
+    <div class="books-grid">
+        {% for book in books %}
+        <div class="book-card">
+            <div class="book-image">
+                {% if book.image_url %}
+                <img src="{{ book.image_url }}" alt="{{ book.title }}">
+                {% else %}
+                <div style="color: var(--light);">No Image</div>
+                {% endif %}
+
+                {% if book.quantity < 5 and book.quantity> 0 %}
+                    <span class="badge badge-warning" style="position: absolute; top: 10px; right: 10px;">Low
+                        Stock</span>
+                    {% elif book.quantity == 0 %}
+                    <span class="badge badge-danger" style="position: absolute; top: 10px; right: 10px;">Out of
+                        Stock</span>
+                    {% endif %}
+            </div>
+            <div class="book-info">
+                <h3>{{ book.title }}</h3>
+                <p class="author">by {{ book.author }}</p>
+                <p class="price">₹{{ book.price }}</p>
+
+                {% if user and user.is_staff %}
+                <p style="color: var(--light); margin-bottom: 10px;">Available: {{ book.quantity }}</p>
+                <div style="display: flex; gap: 5px;">
+                    <a href="/books/edit/{{ book.id }}" class="btn btn-outline"
+                        style="flex: 1; text-align: center;">Edit</a>
+                    <form action="/books/delete/{{ book.id }}" method="post" onsubmit="return confirm('Delete?');"
+                        style="flex: 1;">
+                        <button type="submit" class="btn btn-primary"
+                            style="width: 100%; background: var(--primary);">Delete</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                {% if not user or not user.is_staff %}
+                <div style="display: flex; gap: 5px; margin-top: 10px;">
+                    {% if book.quantity > 0 %}
+                    <form action="/books/buy/{{ book.id }}" method="post" style="flex: 1;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Buy</button>
+                    </form>
+                    <form action="/books/borrow/{{ book.id }}" method="post" style="flex: 1;">
+                        <button type="submit" class="btn btn-outline" style="width: 100%;">Borrow</button>
+                    </form>
+                    {% else %}
+                    <button class="btn btn-outline" disabled style="width: 100%; opacity: 0.5;">Unavailable</button>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

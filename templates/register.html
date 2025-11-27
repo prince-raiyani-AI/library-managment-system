@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display: flex; align-items: center; justify-content: center; min-height: 80vh;">
+    <div class="card" style="width: 400px; padding: 40px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="color: var(--primary); margin-bottom: 10px;">Sign Up</h2>
+            <p style="color: var(--light);">Create a new account</p>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger"
+            style="background: rgba(235, 22, 22, 0.2); color: #EB1616; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if msg %}
+        <div class="alert alert-success"
+            style="background: rgba(25, 135, 84, 0.2); color: #198754; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
+            {{ msg }}
+        </div>
+        {% endif %}
+
+        <form action="/auth/register" method="post">
+            <div style="margin-bottom: 20px;">
+                <input type="email" name="email" placeholder="Email Address" required
+                    style="background: var(--dark); border: 1px solid var(--border);">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <input type="password" name="password" placeholder="Password" required
+                    style="background: var(--dark); border: 1px solid var(--border);">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <input type="text" name="staff_pin" placeholder="Staff PIN (Optional)"
+                    style="background: var(--dark); border: 1px solid var(--border);">
+                <small style="color: var(--light); font-size: 0.8rem;">Leave blank for member registration</small>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 1rem;">Sign
+                Up</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <p style="color: var(--light);">Already have an account? <a href="/auth/login"
+                    style="color: var(--primary); text-decoration: none;">Sign In</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
