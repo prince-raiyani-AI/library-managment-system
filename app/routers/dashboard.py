@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session, joinedload
@@ -32,7 +32,7 @@ def get_dashboard(request: Request, db: Session = Depends(database.get_db)):
     total_books_sold = db.query(func.count(models.Transaction.id)).filter(models.Transaction.transaction_type == "buy").scalar() or 0
     
     # 2. High Demand Books (Sold in past 3 days)
-    three_days_ago = datetime.now() - timedelta(days=3)
+    three_days_ago = datetime.now() - timedelta(days=3)  # A timedelta is a Python object that represents a duration, or the difference between two dates or times.
     high_demand_books = db.query(
         models.Book,
         func.count(models.Transaction.id).label("sales_count")
@@ -105,3 +105,52 @@ def get_users(request: Request, db: Session = Depends(database.get_db)):
     
     users = db.query(models.User).order_by(models.User.created_at.desc()).all()
     return templates.TemplateResponse("users.html", {"request": request, "users": users, "user": user})
+
+@router.get("/users/edit/{user_id}", response_class=HTMLResponse)
+def edit_user_page(user_id: int, request: Request, db: Session = Depends(database.get_db)):
+    user = get_current_user(request, db)
+    if not user or not user.is_staff:
+        return RedirectResponse(url="/auth/login", status_code=status.HTTP_303_SEE_OTHER)
+    
+    target_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    return templates.TemplateResponse("edit_user.html", {"request": request, "target_user": target_user, "user": user})
+
+@router.post("/users/edit/{user_id}")
+def edit_user(
+    user_id: int,
+    request: Request,
+    email: str = Form(...),
+    is_staff: bool = Form(False),
+    db: Session = Depends(database.get_db)
+):
+    user = get_current_user(request, db)
+    if not user or not user.is_staff:
+        raise HTTPException(status_code=403, detail="Not authorized")
+        
+    target_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    target_user.email = email
+    target_user.is_staff = is_staff
+    db.commit()
+    
+    return RedirectResponse(url="/dashboard/users", status_code=status.HTTP_303_SEE_OTHER)
+
+@router.post("/users/delete/{user_id}")
+def delete_user(user_id: int, request: Request, db: Session = Depends(database.get_db)):
+    user = get_current_user(request, db)
+    if not user or not user.is_staff:
+        raise HTTPException(status_code=403, detail="Not authorized")
+        
+    target_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    db.delete(target_user)
+    db.commit()
+    
+    return RedirectResponse(url="/dashboard/users", status_code=status.HTTP_303_SEE_OTHER)

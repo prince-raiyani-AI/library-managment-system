@@ -16,6 +16,7 @@
                         <th>Email</th>
                         <th>Role</th>
                         <th>Joined Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,6 +32,15 @@
                             {% endif %}
                         </td>
                         <td>{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td style="display: flex; gap: 5px;">
+                            <a href="/dashboard/users/edit/{{ u.id }}" class="btn btn-outline"
+                                style="padding: 5px 10px; font-size: 0.8rem;">Edit</a>
+                            <form action="/dashboard/users/delete/{{ u.id }}" method="post"
+                                onsubmit="return confirm('Are you sure? This will delete all user history.');">
+                                <button type="submit" class="btn btn-primary"
+                                    style="padding: 5px 10px; font-size: 0.8rem; background-color: #dc3545; border-color: #dc3545;">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

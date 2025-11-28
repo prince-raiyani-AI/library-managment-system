@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h3 style="color: var(--primary); margin-bottom: 20px;">Edit User</h3>
+
+    <div class="card" style="max-width: 600px;">
+        <div class="card-header">
+            <h3 class="card-title">Update User Details</h3>
+        </div>
+        <div class="card-body">
+            <form action="/dashboard/users/edit/{{ target_user.id }}" method="post">
+                <div style="margin-bottom: 20px;">
+                    <label style="color: var(--light); margin-bottom: 5px; display: block;">Email Address</label>
+                    <input type="email" name="email" value="{{ target_user.email }}" required
+                        style="width: 100%; padding: 10px; background: var(--dark); border: 1px solid var(--border); color: var(--light); border-radius: 5px;">
+                </div>
+
+                <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="is_staff" id="is_staff" value="True" {% if target_user.is_staff
+                        %}checked{% endif %} style="width: 20px; height: 20px;">
+                    <label for="is_staff" style="color: var(--light);">Is Staff Member?</label>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary">Update User</button>
+                    <a href="/dashboard/users" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

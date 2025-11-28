@@ -96,7 +96,7 @@ def borrow_book(book_id: int, request: Request, db: Session = Depends(database.g
     user = get_current_user(request, db)
     if not user:
         return RedirectResponse(url="/auth/login", status_code=status.HTTP_303_SEE_OTHER)
-
+        
     book = db.query(models.Book).filter(models.Book.id == book_id).first()
     if not book or book.quantity < 1:
         return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
@@ -139,7 +139,7 @@ def my_books(request: Request, db: Session = Depends(database.get_db)):
     
     transactions = db.query(models.Transaction).options(joinedload(models.Transaction.book)).filter(models.Transaction.user_id == user.id).order_by(models.Transaction.created_at.desc()).all()
     
-    return templates.TemplateResponse("my_books.html", {"request": request, "transactions": transactions, "user": user})
+    return templates.TemplateResponse("my_books.html", {"request": request, "transactions": transactions, "user": user, "now": datetime.now().astimezone(), "timedelta": timedelta})
 
 @router.post("/return/{transaction_id}")
 def return_book_user(transaction_id: int, request: Request, db: Session = Depends(database.get_db)):

@@ -63,8 +63,8 @@ The system uses a relational database (PostgreSQL) with the following schema:
 
 1.  **Clone the repository**:
     ```bash
-    git clone <repository_url>
-    cd library-management-system
+    git clone https://github.com/prince-raiyani-AI/library-managment-system.git
+    cd library-managment-system
     ```
 
 2.  **Create a virtual environment**:
@@ -153,11 +153,19 @@ The system uses a relational database (PostgreSQL) with the following schema:
 
 ## Docker Hub
 
--   **Docker Hub**: [library-management-system](https://hub.docker.com/repository/docker/prince024/library-managment-system)
+-   **Docker Hub**: [library-management-system](https://hub.docker.com/repository/docker/prince024/library-managment-system) - My docker image link
 
 ## Application screenshots
 
-
+<img width="1894" height="905" alt="image" src="https://github.com/user-attachments/assets/c5f5189e-fbf5-4c27-90e1-df61016035b1" />
+<img width="1893" height="893" alt="image" src="https://github.com/user-attachments/assets/ff288437-dff9-403c-b2cd-27da222014f9" />
+### Admin logged in view
+<img width="1894" height="900" alt="image" src="https://github.com/user-attachments/assets/f80cdfb9-880e-4563-afb0-95e026542768" />
+<img width="1896" height="905" alt="image" src="https://github.com/user-attachments/assets/ea04cff5-d33e-4015-8403-4200f16ad905" />
+<img width="1893" height="905" alt="image" src="https://github.com/user-attachments/assets/eaf11bd0-40c8-49fe-a42f-8cc1027aaac8" />
+### Normal user logged in view
+<img width="1883" height="903" alt="image" src="https://github.com/user-attachments/assets/f2c18a97-3cdc-4e5a-842b-ef6e6a5558fb" />
+<img width="1913" height="898" alt="image" src="https://github.com/user-attachments/assets/d33dbbc5-35dd-41a5-a2d8-abc58899f22b" />
 
 ## Reference & Acknowledgements & Resources Used
 
@@ -169,11 +177,11 @@ The system uses a relational database (PostgreSQL) with the following schema:
 -   **ORM**: [SQLAlchemy](https://www.sqlalchemy.org/)
 -   **Testing**: [Pytest](https://docs.pytest.org/)
 -   **Authentication**: [Passlib](https://passlib.readthedocs.io/) for password hashing.
--   **Reference**: [Library-Management-System-FastAPI](https://github.com/rupsri5/Library-Management-System-FastAPI)
--   **Reference**: [Library-Management-System](https://github.com/kurekhombre/Library-Management-System)
+-   **Reference git repo**: [Library-Management-System-FastAPI](https://github.com/rupsri5/Library-Management-System-FastAPI)
+-   **Reference git repo**: [Library-Management-System](https://github.com/kurekhombre/Library-Management-System)
 
 ## Contact
 
 -   **Author**: Prince Raiyani
--   **Email**: prince.raiyani.ai@gmail.com
+-   **Email**: princeraiyani@vebuin.com
 -   **GitHub**: [prince-raiyani-AI](https://github.com/prince-raiyani-AI)

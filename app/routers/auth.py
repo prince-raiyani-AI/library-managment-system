@@ -58,8 +58,7 @@ def login(
     if not user or not utils.verify_password(password, user.password_hash):
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
 
-    # For simplicity, we are using a cookie to store the user ID
-    # In a real production app, use JWT tokens
+    # for simplicity we are using a cookie to store the user id and in a real production app, use JWT tokens
     response = RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
     if user.is_staff:
         response = RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
