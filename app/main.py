@@ -41,7 +41,7 @@ def get_current_user(request: Request, db: Session):
     return db.query(models.User).filter(models.User.id == int(user_id)).first()
 
 @app.get("/", response_class=HTMLResponse)
-def read_root(request: Request, q: str = None, db: Session = Depends(get_db)):
+def read_root(request: Request, q: str = None, error: str = None, db: Session = Depends(get_db)):
     """
     Root endpoint to render the home page with optional search.
     """
@@ -52,4 +52,4 @@ def read_root(request: Request, q: str = None, db: Session = Depends(get_db)):
     
     books = query.all()
     user = get_current_user(request, db)
-    return templates.TemplateResponse("index.html", {"request": request, "books": books, "user": user, "query": q})
+    return templates.TemplateResponse("index.html", {"request": request, "books": books, "user": user, "query": q, "error": error})

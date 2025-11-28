@@ -23,10 +23,10 @@ def get_current_user(request: Request, db: Session = Depends(database.get_db)):
     return db.query(models.User).filter(models.User.id == int(user_id)).first()
 
 @router.get("/", response_class=HTMLResponse)
-def get_books(request: Request, db: Session = Depends(database.get_db)):
+def get_books(request: Request, error: Optional[str] = None, db: Session = Depends(database.get_db)):
     books = db.query(models.Book).all()
     user = get_current_user(request, db)
-    return templates.TemplateResponse("index.html", {"request": request, "books": books, "user": user})
+    return templates.TemplateResponse("index.html", {"request": request, "books": books, "user": user, "error": error})
 
 @router.post("/add")
 async def add_book(
@@ -111,7 +111,7 @@ def borrow_book(book_id: int, request: Request, db: Session = Depends(database.g
 
     if existing_borrow:
         # Prevent double borrowing
-        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url="/?error=You have already borrowed this book", status_code=status.HTTP_303_SEE_OTHER)
 
     # Create Transaction
     due_date = datetime.now() + timedelta(days=14) # 2 weeks borrow period

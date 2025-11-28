@@ -9,6 +9,13 @@
         {% endif %}
     </div>
 
+    {% if error %}
+    <div class="alert alert-danger"
+        style="background: rgba(235, 22, 22, 0.2); color: #EB1616; padding: 10px; border-radius: 5px; margin: 20px; text-align: center;">
+        {{ error }}
+    </div>
+    {% endif %}
+
     <div class="books-grid">
         {% for book in books %}
         <div class="book-card">
