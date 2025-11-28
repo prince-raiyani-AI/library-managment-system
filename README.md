@@ -23,34 +23,47 @@ A comprehensive Library Management System built with FastAPI and PostgreSQL. Thi
 The system uses a relational database (PostgreSQL) with the following schema:
 
 ### 1. Users Table (`users`)
--   **id**: Integer (Primary Key)
--   **email**: String (Unique)
--   **password_hash**: String
--   **is_staff**: Boolean (True for Staff, False for Members)
--   **created_at**: DateTime
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | Integer | Primary Key | Unique user identifier |
+| `email` | String | Unique, Not Null | User's email address (used for login) |
+| `password_hash` | String | Not Null | Hashed password (bcrypt) |
+| `is_staff` | Boolean | Default=False | `True` for Staff, `False` for Members |
+| `created_at` | DateTime | Default=Now | Account creation timestamp |
+
 -   **Relationships**: One-to-Many with `transactions`.
 
 ### 2. Books Table (`books`)
--   **id**: Integer (Primary Key)
--   **title**: String
--   **author**: String
--   **price**: Float
--   **quantity**: Integer (Stock)
--   **description**: Text
--   **image_url**: String
--   **created_at**: DateTime
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | Integer | Primary Key | Unique book identifier |
+| `title` | String | Not Null, Index | Title of the book |
+| `author` | String | Not Null, Index | Author of the book |
+| `description` | Text | Nullable | Brief summary or details |
+| `price` | Float | Not Null | Price of the book |
+| `quantity` | Integer | Default=0 | Current stock level |
+| `image_url` | String | Nullable | Path to book cover image |
+| `created_at` | DateTime | Default=Now | Record creation timestamp |
+
 -   **Relationships**: One-to-Many with `transactions`.
 
 ### 3. Transactions Table (`transactions`)
--   **id**: Integer (Primary Key)
--   **user_id**: Integer (ForeignKey -> `users.id`)
--   **book_id**: Integer (ForeignKey -> `books.id`)
--   **transaction_type**: String ('buy' or 'borrow')
--   **amount**: Float
--   **due_date**: DateTime (Nullable, for borrows)
--   **return_date**: DateTime (Nullable)
--   **is_returned**: Boolean (Default False)
--   **created_at**: DateTime
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | Integer | Primary Key | Unique transaction identifier |
+| `user_id` | Integer | ForeignKey(`users.id`) | User who performed the transaction |
+| `book_id` | Integer | ForeignKey(`books.id`) | Book involved in the transaction |
+| `transaction_type` | String | Not Null | 'buy' or 'borrow' |
+| `amount` | Float | Not Null | Cost at time of transaction |
+| `due_date` | DateTime | Nullable | Deadline for return (if borrowed) |
+| `return_date` | DateTime | Nullable | Actual return timestamp |
+| `is_returned` | Boolean | Default=False | Status of borrowed book |
+| `created_at` | DateTime | Default=Now | Transaction timestamp |
+
+-   **Relationships**: Many-to-One with `users` and `books`.
 
 ## Borrowing Rules
 
